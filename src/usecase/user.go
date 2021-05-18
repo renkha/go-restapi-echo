@@ -5,13 +5,14 @@ import (
 
 	"github.com/renkha/go-restapi/src/model"
 	"github.com/renkha/go-restapi/src/repository"
-	usecase "github.com/renkha/go-restapi/src/usecase/user"
+	re "github.com/renkha/go-restapi/src/usecase/user"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type UserUsecase interface {
-	CreateUser(req usecase.UserRequest) (model.User, error)
-	CheckExistEmail(req usecase.UserRequest) error
+	CreateUser(req re.UserRequest) (model.User, error)
+	CheckExistEmail(req re.UserRequest) error
+	AuthUser(req re.UserLoginRequest) (model.User, error)
 }
 
 type usecases struct {
@@ -22,11 +23,12 @@ func NewUsecase(repository repository.UserRepository) *usecases {
 	return &usecases{repository}
 }
 
-func (u *usecases) CreateUser(req usecase.UserRequest) (model.User, error) {
+func (u *usecases) CreateUser(req re.UserRequest) (model.User, error) {
 	user := model.User{}
 	user.Name = req.Name
 	user.Email = req.Email
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return user, err
 	}
@@ -39,7 +41,7 @@ func (u *usecases) CreateUser(req usecase.UserRequest) (model.User, error) {
 	return newUser, nil
 }
 
-func (u *usecases) CheckExistEmail(req usecase.UserRequest) error {
+func (u *usecases) CheckExistEmail(req re.UserRequest) error {
 	email := req.Email
 
 	if user := u.repository.FindEmail(email); user != nil {
@@ -47,4 +49,21 @@ func (u *usecases) CheckExistEmail(req usecase.UserRequest) error {
 	}
 
 	return nil
+}
+
+func (u *usecases) AuthUser(req re.UserLoginRequest) (model.User, error) {
+	email := req.Email
+	password := req.Password
+
+	user, err := u.repository.FindUserByEmail(email)
+	if err != nil {
+		return user, errors.New("email not registered")
+	}
+
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	if err != nil {
+		return user, errors.New("invalid email or password")
+	}
+
+	return user, nil
 }
