@@ -73,7 +73,9 @@ func (d *userDelivery) UserLogin(c echo.Context) error {
 		return c.JSON(http.StatusUnauthorized, response)
 	}
 
-	response := helper.ResponseFormatter(http.StatusOK, "success", "user authenticated", userAuth)
+	userData := re.UserResponseFormatter(userAuth)
+
+	response := helper.ResponseFormatter(http.StatusOK, "success", "user authenticated", userData)
 
 	return c.JSON(http.StatusOK, response)
 }
