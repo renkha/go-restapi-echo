@@ -2,8 +2,10 @@ package src
 
 import (
 	"github.com/labstack/echo/v4"
+	"github.com/renkha/go-restapi/auth"
 	"github.com/renkha/go-restapi/config"
 	"github.com/renkha/go-restapi/helper"
+	"github.com/renkha/go-restapi/middleware"
 	"github.com/renkha/go-restapi/src/delivery"
 	"github.com/renkha/go-restapi/src/model"
 	"github.com/renkha/go-restapi/src/repository"
@@ -18,7 +20,9 @@ func (r UserRoutes) Route() []helper.Route {
 
 	userRepository := repository.NewRepository(db)
 	userUsecase := usecase.NewUsecase(userRepository)
-	userDelivery := delivery.NewDelivery(userUsecase)
+	authService := auth.NewAuthService()
+
+	userDelivery := delivery.NewDelivery(userUsecase, authService)
 
 	return []helper.Route{
 		{
@@ -30,6 +34,12 @@ func (r UserRoutes) Route() []helper.Route {
 			Method:  echo.POST,
 			Path:    "/login",
 			Handler: userDelivery.UserLogin,
+		},
+		{
+			Method:      echo.GET,
+			Path:        "/secret",
+			Handler:     userDelivery.SecretTest,
+			Middlerware: []echo.MiddlewareFunc{middleware.JwtMiddleware()},
 		},
 	}
 }
