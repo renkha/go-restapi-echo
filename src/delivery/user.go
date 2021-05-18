@@ -51,3 +51,29 @@ func (d *userDelivery) UserRegistration(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, response)
 }
+
+func (d *userDelivery) UserLogin(c echo.Context) error {
+	req := new(re.UserLoginRequest)
+
+	if err := c.Bind(req); err != nil {
+		response := helper.ResponseFormatter(http.StatusBadRequest, "error", "invalid request", nil)
+		return c.JSON(http.StatusBadRequest, response)
+	}
+
+	if err := c.Validate(req); err != nil {
+		// errors := helper.ErrorFormatter(err)
+		// errMessage := helper.M{"errors": errors}
+		response := helper.ResponseFormatter(http.StatusBadRequest, "error", "failed", err.Error())
+		return c.JSON(http.StatusBadRequest, response)
+	}
+
+	userAuth, err := d.userUsecase.AuthUser(*req)
+	if err != nil {
+		response := helper.ResponseFormatter(http.StatusUnauthorized, "error", err.Error(), nil)
+		return c.JSON(http.StatusUnauthorized, response)
+	}
+
+	response := helper.ResponseFormatter(http.StatusOK, "success", "user authenticated", userAuth)
+
+	return c.JSON(http.StatusOK, response)
+}
