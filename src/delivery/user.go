@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
+	"github.com/renkha/go-restapi/auth"
 	"github.com/renkha/go-restapi/helper"
 	"github.com/renkha/go-restapi/src/usecase"
 	re "github.com/renkha/go-restapi/src/usecase/user"
@@ -11,10 +12,17 @@ import (
 
 type userDelivery struct {
 	userUsecase usecase.UserUsecase
+	authService auth.AuthService
 }
 
-func NewDelivery(userUsecase usecase.UserUsecase) *userDelivery {
-	return &userDelivery{userUsecase}
+func NewDelivery(
+	userUsecase usecase.UserUsecase,
+	authService auth.AuthService,
+) *userDelivery {
+	return &userDelivery{
+		userUsecase,
+		authService,
+	}
 }
 
 func (d *userDelivery) UserRegistration(c echo.Context) error {
@@ -42,10 +50,17 @@ func (d *userDelivery) UserRegistration(c echo.Context) error {
 	if err != nil {
 		// errors := helper.ErrorFormatter(err)
 		// errMessage := helper.M{"errors": errors}
-		response := helper.ResponseFormatter(http.StatusBadRequest, "error", "failed", err.Error())
+		response := helper.ResponseFormatter(http.StatusBadRequest, "error", err.Error(), nil)
 		return c.JSON(http.StatusBadRequest, response)
 	}
-	userData := re.UserResponseFormatter(newUser)
+
+	authToken, err := d.authService.GetAccessToken(newUser.ID)
+	if err != nil {
+		response := helper.ResponseFormatter(http.StatusInternalServerError, "error", err.Error(), nil)
+		return c.JSON(http.StatusBadRequest, response)
+	}
+
+	userData := re.UserResponseFormatter(newUser, authToken)
 
 	response := helper.ResponseFormatter(http.StatusOK, "success", "success user", userData)
 
@@ -63,7 +78,7 @@ func (d *userDelivery) UserLogin(c echo.Context) error {
 	if err := c.Validate(req); err != nil {
 		// errors := helper.ErrorFormatter(err)
 		// errMessage := helper.M{"errors": errors}
-		response := helper.ResponseFormatter(http.StatusBadRequest, "error", "failed", err.Error())
+		response := helper.ResponseFormatter(http.StatusBadRequest, "error", err.Error(), nil)
 		return c.JSON(http.StatusBadRequest, response)
 	}
 
@@ -73,9 +88,21 @@ func (d *userDelivery) UserLogin(c echo.Context) error {
 		return c.JSON(http.StatusUnauthorized, response)
 	}
 
-	userData := re.UserResponseFormatter(userAuth)
+	authToken, err := d.authService.GetAccessToken(userAuth.ID)
+	if err != nil {
+		response := helper.ResponseFormatter(http.StatusInternalServerError, "error", err.Error(), nil)
+		return c.JSON(http.StatusBadRequest, response)
+	}
+
+	userData := re.UserResponseFormatter(userAuth, authToken)
 
 	response := helper.ResponseFormatter(http.StatusOK, "success", "user authenticated", userData)
+
+	return c.JSON(http.StatusOK, response)
+}
+
+func (d *userDelivery) SecretTest(c echo.Context) error {
+	response := helper.M{"meesage": "secret route"}
 
 	return c.JSON(http.StatusOK, response)
 }
