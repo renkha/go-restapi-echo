@@ -1,4 +1,4 @@
-module github.com/renkha/go-restapi
+module github.com/renkha/go-restapi-echo
 
 go 1.16
 
