@@ -2,7 +2,7 @@ package repository
 
 import (
 	"github.com/jinzhu/gorm"
-	"github.com/renkha/go-restapi/src/model"
+	"github.com/renkha/go-restapi-echo/src/model"
 )
 
 type UserRepository interface {

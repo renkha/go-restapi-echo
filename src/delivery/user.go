@@ -4,10 +4,10 @@ import (
 	"net/http"
 
 	"github.com/labstack/echo/v4"
-	"github.com/renkha/go-restapi/auth"
-	"github.com/renkha/go-restapi/helper"
-	"github.com/renkha/go-restapi/src/usecase"
-	re "github.com/renkha/go-restapi/src/usecase/user"
+	"github.com/renkha/go-restapi-echo/auth"
+	"github.com/renkha/go-restapi-echo/helper"
+	"github.com/renkha/go-restapi-echo/src/usecase"
+	re "github.com/renkha/go-restapi-echo/src/usecase/user"
 )
 
 type userDelivery struct {

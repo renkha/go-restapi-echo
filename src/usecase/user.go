@@ -3,9 +3,9 @@ package usecase
 import (
 	"errors"
 
-	"github.com/renkha/go-restapi/src/model"
-	"github.com/renkha/go-restapi/src/repository"
-	re "github.com/renkha/go-restapi/src/usecase/user"
+	"github.com/renkha/go-restapi-echo/src/model"
+	"github.com/renkha/go-restapi-echo/src/repository"
+	re "github.com/renkha/go-restapi-echo/src/usecase/user"
 	"golang.org/x/crypto/bcrypt"
 )
 
