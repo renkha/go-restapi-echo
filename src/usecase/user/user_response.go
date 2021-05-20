@@ -3,7 +3,7 @@ package usecase
 import (
 	"time"
 
-	"github.com/renkha/go-restapi/src/model"
+	"github.com/renkha/go-restapi-echo/src/model"
 )
 
 type UserResponse struct {

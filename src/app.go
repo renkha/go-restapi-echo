@@ -2,14 +2,14 @@ package src
 
 import (
 	"github.com/labstack/echo/v4"
-	"github.com/renkha/go-restapi/auth"
-	"github.com/renkha/go-restapi/config"
-	"github.com/renkha/go-restapi/helper"
-	"github.com/renkha/go-restapi/middleware"
-	"github.com/renkha/go-restapi/src/delivery"
-	"github.com/renkha/go-restapi/src/model"
-	"github.com/renkha/go-restapi/src/repository"
-	"github.com/renkha/go-restapi/src/usecase"
+	"github.com/renkha/go-restapi-echo/auth"
+	"github.com/renkha/go-restapi-echo/config"
+	"github.com/renkha/go-restapi-echo/helper"
+	"github.com/renkha/go-restapi-echo/middleware"
+	"github.com/renkha/go-restapi-echo/src/delivery"
+	"github.com/renkha/go-restapi-echo/src/model"
+	"github.com/renkha/go-restapi-echo/src/repository"
+	"github.com/renkha/go-restapi-echo/src/usecase"
 )
 
 type UserRoutes struct{}

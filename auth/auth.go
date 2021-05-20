@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/renkha/go-restapi/middleware"
+	"github.com/renkha/go-restapi-echo/middleware"
 )
 
 type AuthService interface {
